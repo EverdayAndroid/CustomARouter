@@ -1,0 +1,109 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+}
+def androidID = rootProject.ext.app_android
+def dependenciesID = rootProject.ext.dependenciesID
+def appID = rootProject.ext.appID
+def url = rootProject.ext.url
+android {
+    compileSdkVersion androidID.compileSdkVersion
+    buildToolsVersion androidID.buildToolsVersion
+
+    defaultConfig {
+        applicationId appID.applicationId
+        minSdkVersion androidID.minSdkVersion
+        targetSdkVersion androidID.targetSdkVersion
+        versionCode androidID.versionCode
+        versionName androidID.versionName
+        //开启分包
+        multiDexEnabled true
+
+        //将svg图片生成指定维度的png图片
+        vectorDrawables.generatedDensities('xhdpi','xxhdpi')
+        //使用support-v7兼容（5.0版本以上）
+        vectorDrawables.useSupportLibrary = true
+
+
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //只有中文资源
+        resConfigs "zh"
+
+        ndk {
+            abiFilters('x86','x86_64')
+        }
+
+        //对dx操作的配置  组件化的架构设计https://segmentfault.com/a/1190000021177287
+        dexOptions {
+            //配置执行dx命令是为其分配的最大堆内容
+            javaMaxHeapSize '2g'
+            //配置是否执行 dex Libraries 工程，开启后提高构建速度，不过会影响clean熟读
+            preDexLibraries = false
+            //配置是否开启jumbo模式，代码方法超过65535 需要强制开启才能构建成功
+            jumboMode true
+            //配置Gradle运行dex命令时使用的线程数量
+            threadCount 8
+            //配置multidex参数
+            additionalParameters = [
+                    '--multi-dex', //多dex分包
+                    '--set-max-idx-number=50000', //每个包内方法数上线
+                    //'--main-dex-list=' + '/multidex-config.txt', //打包到主classes.dex的文件列表
+                    'minima-main-dex'
+            ]
+        }
+
+
+        //android工程给java工程传参
+        javaCompileOptions{
+            annotationProcessorOptions{
+//                arguments = [AROUTER_MODULE_NAME: project.getName()]
+                arguments = [everDay: 'hello javapoet']
+            }
+        }
+    }
+    buildFeatures{
+        dataBinding = true
+    }
+
+    resourcePrefix "app_"
+    buildTypes {
+        debug{
+            buildConfigField("String","app_request_url_debug","\"${url.debug}\"")
+        }
+        release {
+            buildConfigField("String","app_request_url_release","\"${url.release}\"")
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(":base")
+    implementation project(":common")
+    println("$isRelease    $moduleName")
+    if(isRelease){
+        implementation project(":home")
+        implementation project(":personal")
+        implementation project(":login")
+    }else{
+        if(moduleName == "login"){
+            implementation project(":login")
+        }else if(moduleName == "home"){
+            implementation project(":login")
+        }else if(moduleName == "personal"){
+            implementation project(":personal")
+        }
+    }
+    implementation project(":arouter-annotation")
+    annotationProcessor project(":arouter-compiler")
+}

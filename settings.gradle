@@ -1,0 +1,10 @@
+include ':arouter-compiler'
+include ':arouter-annotation'
+include ':common'
+include ':login'
+include ':http'
+include ':base'
+include ':personal'
+include ':home'
+include ':app'
+rootProject.name = "CustomARouter"
