@@ -27,6 +27,13 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        //android工程给java工程传参
+        javaCompileOptions{
+            annotationProcessorOptions{
+//                arguments = [AROUTER_MODULE_NAME: project.getName()]
+                arguments = [moduleName: project.getName()]
+            }
+        }
     }
 
     sourceSets{
@@ -70,4 +77,6 @@ dependencies {
 
     implementation project(":base")
     implementation project(":common")
+    implementation project(":arouter-annotation")
+    annotationProcessor project(":arouter-compiler")
 }

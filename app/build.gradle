@@ -31,9 +31,9 @@ android {
         //只有中文资源
         resConfigs "zh"
 
-        ndk {
-            abiFilters('x86','x86_64')
-        }
+//        ndk {
+//            abiFilters('x86','x86_64')
+//        }
 
         //对dx操作的配置  组件化的架构设计https://segmentfault.com/a/1190000021177287
         dexOptions {
@@ -59,7 +59,7 @@ android {
         javaCompileOptions{
             annotationProcessorOptions{
 //                arguments = [AROUTER_MODULE_NAME: project.getName()]
-                arguments = [everDay: 'hello javapoet']
+                arguments = [moduleName: project.getName()]
             }
         }
     }
@@ -106,4 +106,7 @@ dependencies {
     }
     implementation project(":arouter-annotation")
     annotationProcessor project(":arouter-compiler")
+
+//    implementation 'com.alibaba:arouter-api:1.5.1'
+//    annotationProcessor 'com.alibaba:arouter-compiler:1.5.1'
 }
