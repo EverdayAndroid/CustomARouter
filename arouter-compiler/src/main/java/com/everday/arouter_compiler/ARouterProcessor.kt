@@ -4,6 +4,7 @@ import com.everday.arouter_annotation.Route
 import com.google.auto.service.AutoService
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.TypeName
 import com.squareup.javapoet.TypeSpec
 import java.io.IOException
 import javax.annotation.processing.*
@@ -13,6 +14,7 @@ import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.lang.model.util.Types
 import javax.tools.Diagnostic
+import javax.tools.Diagnostic.NOPOS
 import javax.tools.DiagnosticListener
 
 /**
@@ -46,7 +48,7 @@ class ARouterProcessor : AbstractProcessor() {
         val androidParams = processingEnvironment?.options?.get("moduleName")
 
         //注解处理器里面抛出异常使用Diagnostic.Kind.ERROR
-        mess?.printMessage(Diagnostic.Kind.WARNING, "$androidParams  ==>")
+        mess?.printMessage(Diagnostic.Kind.WARNING, "$androidParams  ")
 
     }
 
@@ -55,21 +57,21 @@ class ARouterProcessor : AbstractProcessor() {
         annotations: MutableSet<out TypeElement>?,
         round: RoundEnvironment?
     ): Boolean {
-        if (annotations.isNullOrEmpty()) {
-//            mess?.printMessage(Diagnostic.Kind.NOTE, "process=========> run")?
-        }
         val elements = round?.getElementsAnnotatedWith(Route::class.java)
-        elements?.forEach {
+        elements?.forEach { element ->
+            mess?.printMessage(Diagnostic.Kind.WARNING,"${element.simpleName}     =110")
             //方法
             val methodSpec = MethodSpec.methodBuilder("main")
-                .addModifiers(Modifier.PUBLIC,Modifier.STATIC)
-                .returns(Unit::class.java)
+                .addModifiers(Modifier.PUBLIC,Modifier.STATIC)  //修饰符
+                .addStatement("System.out.println()")
+                .returns(TypeName.VOID)
                 .addParameter(Array<String>::class.java,"args")
                 .build()
 
             //2.类
             val testClass = TypeSpec.classBuilder("EverDay1")
                 .addMethod(methodSpec)
+
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                 .build()
             //3.包
@@ -80,9 +82,6 @@ class ARouterProcessor : AbstractProcessor() {
                 e.printStackTrace()
             }
         }
-
-
-//        mess?.printMessage(Diagnostic.Kind.NOTE, "process=========>")
         return false
     }
 }

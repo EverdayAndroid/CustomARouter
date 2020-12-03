@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 def androidID = rootProject.ext.app_android
 def dependenciesID = rootProject.ext.dependenciesID
@@ -105,8 +106,15 @@ dependencies {
         }
     }
     implementation project(":arouter-annotation")
-    annotationProcessor project(":arouter-compiler")
+
+    kapt project(":arouter-compiler")
+//    annotationProcessor project(":arouter-compiler")
 
 //    implementation 'com.alibaba:arouter-api:1.5.1'
 //    annotationProcessor 'com.alibaba:arouter-compiler:1.5.1'
+}
+
+
+afterEvaluate {
+//   println "110==>  ${android.getProperties()}"
 }
