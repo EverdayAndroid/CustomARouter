@@ -3,7 +3,7 @@ plugins {
 }
 // java控制台输出中文乱码
 tasks.withType(JavaCompile) {
-    options.encoding = "GBK"
+    options.encoding = "UTF-8"
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
